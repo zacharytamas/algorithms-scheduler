@@ -1,5 +1,5 @@
 import { schedule } from './algorithm'
-import type { Task, Slot } from './algorithm'
+import type { Task, Schedule } from './algorithm'
 import { TaskStatus } from './algorithm'
 import { describe, expect, it } from 'bun:test'
 
@@ -20,10 +20,10 @@ describe('schedule', () => {
     },
   }
 
-  const defaultSlot: Slot = {
+  const defaultSlot: Schedule = {
     id: 'workday',
     name: 'Regular Workday',
-    durations: [mondayNineAM, tuesdayNineAM],
+    slots: [mondayNineAM, tuesdayNineAM],
   }
 
   it('should schedule a single task into the first available slot', () => {
@@ -34,7 +34,7 @@ describe('schedule', () => {
       id: '1',
       name: 'Simple task',
       duration: 60, // 1 hour
-      slotId: 'workday',
+      scheduleId: 'workday',
       status: TaskStatus.NOT_STARTED,
     }
 
@@ -56,14 +56,14 @@ describe('schedule', () => {
         id: '1',
         name: 'First task',
         duration: 120, // 2 hours
-        slotId: 'workday',
+        scheduleId: 'workday',
         status: TaskStatus.NOT_STARTED,
       },
       {
         id: '2',
         name: 'Second task',
         duration: 60, // 1 hour
-        slotId: 'workday',
+        scheduleId: 'workday',
         status: TaskStatus.NOT_STARTED,
       },
     ]
@@ -92,7 +92,7 @@ describe('schedule', () => {
         id: '1',
         name: 'Completed task',
         duration: 60,
-        slotId: 'workday',
+        scheduleId: 'workday',
         status: TaskStatus.COMPLETED,
         completedAt: new Date('2024-03-24'),
       },
@@ -100,7 +100,7 @@ describe('schedule', () => {
         id: '2',
         name: 'Pending task',
         duration: 60,
-        slotId: 'workday',
+        scheduleId: 'workday',
         status: TaskStatus.NOT_STARTED,
       },
     ]
@@ -127,14 +127,14 @@ describe('schedule', () => {
         id: '1',
         name: 'Long task',
         duration: 480, // 8 hours (full day)
-        slotId: 'workday',
+        scheduleId: 'workday',
         status: TaskStatus.NOT_STARTED,
       },
       {
         id: '2',
         name: 'Next day task',
         duration: 60,
-        slotId: 'workday',
+        scheduleId: 'workday',
         status: TaskStatus.NOT_STARTED,
       },
     ]
@@ -163,7 +163,7 @@ describe('schedule', () => {
         id: '1',
         name: 'Too long task',
         duration: 600, // 10 hours (longer than slot duration)
-        slotId: 'workday',
+        scheduleId: 'workday',
         status: TaskStatus.NOT_STARTED,
       },
     ]

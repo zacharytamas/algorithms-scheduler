@@ -5,11 +5,11 @@ export interface TimeRange {
   endMinutes: number
 }
 
-export interface Slot {
+export interface Schedule {
   id: string
   name: string
   /** Periods of time within a week that Tasks can be scheduled into */
-  durations: {
+  slots: {
     /** 0-6, where 0 is Sunday */
     dayOfWeek: number
     timeRange: TimeRange
@@ -30,8 +30,8 @@ export interface Task {
   name: string
   /** Duration in minutes */
   duration: number
-  /** The ID of the Slot this Task must be scheduled within */
-  slotId: string
+  /** The ID of the Schedule this Task must be scheduled within */
+  scheduleId: string
   /** The current status of this Task */
   status: TaskStatus
   /** When this Task was completed, if it has been */
@@ -45,13 +45,13 @@ export interface ScheduleOptions {
   endDate: Date
 }
 
-function findSlotForTask(task: Task, slots: Slot[]): Slot | undefined {
-  return slots.find((slot) => slot.id === task.slotId)
+function findSlotForTask(task: Task, slots: Schedule[]): Schedule | undefined {
+  return slots.find((slot) => slot.id === task.scheduleId)
 }
 
 function getAvailableDurationsForDate(
   date: Date,
-  slot: Slot,
+  slot: Schedule,
   lastEndTime?: Date,
 ): { dayOfWeek: number; timeRange: TimeRange }[] {
   const dayOfWeek = date.getDay()
@@ -60,7 +60,7 @@ function getAvailableDurationsForDate(
       ? lastEndTime.getHours() * 60 + lastEndTime.getMinutes()
       : 0
 
-  return slot.durations
+  return slot.slots
     .filter((d) => d.dayOfWeek === dayOfWeek)
     .filter((d) => {
       // If this duration ends before the last task ended, skip it
@@ -79,7 +79,7 @@ function getAvailableDurationsForDate(
 
 function getNextAvailableTime(
   date: Date,
-  slot: Slot,
+  slot: Schedule,
   taskDuration: number,
   lastEndTime?: Date,
 ): { start: Date; end: Date } | undefined {
@@ -148,15 +148,15 @@ function isSameDay(date1: Date, date2: Date): boolean {
   )
 }
 
-function canTaskFitInSlot(task: Task, slot: Slot): boolean {
-  return slot.durations.some(
+function canTaskFitInSlot(task: Task, slot: Schedule): boolean {
+  return slot.slots.some(
     (d) => d.timeRange.endMinutes - d.timeRange.startMinutes >= task.duration,
   )
 }
 
 export function schedule(
   tasks: Task[],
-  slots: Slot[],
+  slots: Schedule[],
   options: ScheduleOptions,
 ): Task[] {
   const result = [...tasks]
