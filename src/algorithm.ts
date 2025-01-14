@@ -25,6 +25,28 @@ export enum TaskStatus {
   COMPLETED = 'COMPLETED',
 }
 
+export enum TaskChunkStatus {
+  /** Task chunk has not been started */
+  NOT_STARTED = 'NOT_STARTED',
+  /** Task chunk is in progress */
+  IN_PROGRESS = 'IN_PROGRESS',
+  /** Task chunk has been completed */
+  COMPLETED = 'COMPLETED',
+}
+
+export interface TaskChunk {
+  /** The ID of the Task this chunk belongs to */
+  taskId: string
+  /** The start time of this chunk */
+  start: Date
+  /** The end time of this chunk */
+  end: Date
+  /** The duration of this chunk in minutes */
+  duration: number
+  /** The status of this chunk */
+  status: TaskChunkStatus
+}
+
 export interface Task {
   id: string
   name: string
@@ -36,8 +58,14 @@ export interface Task {
   status: TaskStatus
   /** When this Task was completed, if it has been */
   completedAt?: Date
+  /** When this Task was scheduled to start */
   scheduledStartDate?: Date
+  /** When this Task was scheduled to end */
   scheduledEndDate?: Date
+  /** The smallest unit of available time this Task can be scheduled in. */
+  chunkSize?: number
+  /** The chunks of this Task */
+  chunks: TaskChunk[]
 }
 
 export interface ScheduleOptions {
